@@ -94,7 +94,7 @@ class VectorSpaceModel:
                     print(f"Error occurred during parse_document: {e}")
 
                 self.make_vsm_index(dataset=dataset, n=total_doc)
-                self.save_indexes()
+                # self.save_indexes()
                 self.load_database_time = time.time() - start_time
                 print("\nSaving all computed indexes on the drive.")
                 print(f"Total entires in the collection\t{len(self.vsm_index)}.")
@@ -128,7 +128,7 @@ class VectorSpaceModel:
         words = re.findall(pattern, file_contents.lower())
         for token in words:
             # Don't include a single character token or stop words
-            if len(token) < 2 or token in self.stop_words or len(token) >= 27:
+            if len(token) < 2 or token in self.stop_words or len(token) >= 25:
                 continue
 
             stemmed_token = self.stemmer.stem(token)
@@ -173,6 +173,14 @@ class VectorSpaceModel:
             return -1
 
     def make_vsm_index(self, dataset: Dict[str, Dict[str, int]], n: int) -> None:
+        # print(len(dataset))
+        new_dataset = {}
+        for i, j in dataset.items():
+            if len(j) >= 2:
+                new_dataset[i] = j
+        # print(len(new_dataset))
+        # print(new_dataset)
+        dataset = new_dataset
         # Make Vocabulary
         self.vocabulary = {word: index for index, word in enumerate(dataset.keys())}
 
@@ -185,13 +193,13 @@ class VectorSpaceModel:
         # Iterate over each document
         for doc_name in doc_vector:
             temp_vector = [0.0] * len(self.vocabulary)
-
             for index, (word, word_vector) in enumerate(dataset.items()):
-                if doc_name in word_vector:
-                    tf = word_vector[doc_name]
-                    idf = log10(n / len(word_vector))
-                    self.idf.append(idf)
-                    temp_vector[index] = tf * idf
+                if len(word_vector) >=3:
+                    if doc_name in word_vector:
+                        tf = word_vector[doc_name]
+                        idf = log10(n / len(word_vector))
+                        self.idf.append(idf)
+                        temp_vector[index] = tf * idf
 
             self.vsm_index.append(tuple([doc_name, temp_vector]))
         return
@@ -318,15 +326,16 @@ class VectorSpaceModel:
             25: "Feature Selection",
             26: "Feature Selection",
         }
-        # labels = {
-        #     0: {1, 2, 3, 7},  # 0
-        #     1: {8, 9, 11},  # 1
-        #     2: {12, 13, 14, 15, 16},  # 2
-        #     3: {17, 18, 21},  # 3
-        #     4: {22, 23, 24, 25, 26},  # 4
-        # }
-
         a = []
         for i in doc_seq:
             a.append(labels[i])
         return np.array(a)
+    
+
+
+vector_space_model = VectorSpaceModel(
+    documents_path="ResearchPapers",
+    stop_words_file_path="Stopword-List.txt",
+)
+vector_space_model.initiate()
+print(len(vector_space_model.vocabulary))
