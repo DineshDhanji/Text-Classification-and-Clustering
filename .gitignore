@@ -1,0 +1,16 @@
+# Compiled Python files
+*.pyc
+__pycache__/
+
+# Python virtual environments
+venv/
+.venv/
+env/
+.pipenv/
+
+# User-specific settings
+/.env
+.vscode/
+
+# My Files
+# ResearchPapers/
