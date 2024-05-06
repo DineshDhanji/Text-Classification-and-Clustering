@@ -128,7 +128,7 @@ class VectorSpaceModel:
         words = re.findall(pattern, file_contents.lower())
         for token in words:
             # Don't include a single character token or stop words
-            if len(token) < 2 or token in self.stop_words or len(token) >= 25:
+            if len(token) < 2 or token in self.stop_words or len(token) >= 27:
                 continue
 
             stemmed_token = self.stemmer.stem(token)
@@ -174,13 +174,13 @@ class VectorSpaceModel:
 
     def make_vsm_index(self, dataset: Dict[str, Dict[str, int]], n: int) -> None:
         # print(len(dataset))
-        new_dataset = {}
-        for i, j in dataset.items():
-            if len(j) >= 2:
-                new_dataset[i] = j
+        # new_dataset = {}
+        # for i, j in dataset.items():
+        #     if len(j) >= 2:
+        #         new_dataset[i] = j
         # print(len(new_dataset))
         # print(new_dataset)
-        dataset = new_dataset
+        # dataset = new_dataset
         # Make Vocabulary
         self.vocabulary = {word: index for index, word in enumerate(dataset.keys())}
 
@@ -200,9 +200,24 @@ class VectorSpaceModel:
                         idf = log10(n / len(word_vector))
                         self.idf.append(idf)
                         temp_vector[index] = tf * idf
+                        
+            normalized_matrix = self.normalize_vectors(np.array([temp_vector]))[0]
+            self.vsm_index.append(tuple([doc_name, normalized_matrix]))
+            # self.vsm_index.append(tuple([doc_name, temp_vector]))
+        return None
 
-            self.vsm_index.append(tuple([doc_name, temp_vector]))
-        return
+    def normalize_vectors(self, matrix: np.ndarray) -> np.ndarray:
+        """
+        Normalize Vectors to unit length.
+
+        Args:
+            matrix (np.ndarray): Matrix to be normalized.
+
+        Returns:
+            np.ndarray: Normalized matrix.
+        """
+        norms = np.linalg.norm(matrix, axis=1, keepdims=True)
+        return matrix / norms
 
     def transform_query(self, user_query: str) -> Tuple[int, List[int | None]]:
         """
