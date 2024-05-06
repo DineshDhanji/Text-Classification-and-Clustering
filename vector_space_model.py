@@ -173,15 +173,6 @@ class VectorSpaceModel:
             return -1
 
     def make_vsm_index(self, dataset: Dict[str, Dict[str, int]], n: int) -> None:
-        # print(len(dataset))
-        # new_dataset = {}
-        # for i, j in dataset.items():
-        #     if len(j) >= 2:
-        #         new_dataset[i] = j
-        # print(len(new_dataset))
-        # print(new_dataset)
-        # dataset = new_dataset
-        # Make Vocabulary
         self.vocabulary = {word: index for index, word in enumerate(dataset.keys())}
 
         # Extract unique document names
@@ -201,9 +192,9 @@ class VectorSpaceModel:
                         self.idf.append(idf)
                         temp_vector[index] = tf * idf
                         
+            # self.vsm_index.append(tuple([doc_name, temp_vector]))
             normalized_matrix = self.normalize_vectors(np.array([temp_vector]))[0]
             self.vsm_index.append(tuple([doc_name, normalized_matrix]))
-            # self.vsm_index.append(tuple([doc_name, temp_vector]))
         return None
 
     def normalize_vectors(self, matrix: np.ndarray) -> np.ndarray:
