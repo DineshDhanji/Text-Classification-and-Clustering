@@ -94,7 +94,7 @@ class VectorSpaceModel:
                     print(f"Error occurred during parse_document: {e}")
 
                 self.make_vsm_index(dataset=dataset, n=total_doc)
-                # self.save_indexes()
+                self.save_indexes()
                 self.load_database_time = time.time() - start_time
                 print("\nSaving all computed indexes on the drive.")
                 print(f"Total entires in the collection\t{len(self.vsm_index)}.")
