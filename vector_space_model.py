@@ -55,7 +55,7 @@ class VectorSpaceModel:
 
             self.load_indexes(vsm_index_path)
             self.load_database_time = time.time() - start_time
-            print(f"Total entires in the collection\t{len(self.vsm_index)}")
+            print(f"Total entires in the collection\t{len(self.vsm_index)}.\nLoading time\t{self.load_database_time} seconds.")
             return 1
         else:
             print(
@@ -98,6 +98,7 @@ class VectorSpaceModel:
                 self.load_database_time = time.time() - start_time
                 print("\nSaving all computed indexes on the drive.")
                 print(f"Total entires in the collection\t{len(self.vsm_index)}.")
+                print(f"Loading time\t{self.load_database_time} seconds.")
                 return 1
 
             except Exception as e:
